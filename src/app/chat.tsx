@@ -18,6 +18,12 @@ function ClientChat() {
           <div key={m.id} className="whitespace-pre-wrap">
             {m.role === "user" ? "User: " : "AI: "}
             {m.content}
+            {m.toolInvocations &&
+              m.toolInvocations.map((t) => (
+                <>
+                  {t.toolName}({t.state})
+                </>
+              ))}
           </div>
         ))}
 
