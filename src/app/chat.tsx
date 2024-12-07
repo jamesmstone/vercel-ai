@@ -11,6 +11,7 @@ function ClientChat() {
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { messages, input, handleInputChange, handleSubmit } = useChat({
+    experimental_throttle: 50,
     headers: {
       "x-secret": secret,
     },
