@@ -1,10 +1,10 @@
 "use client";
 
+import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
 import { useChat } from "ai/react";
-import { useState } from "react";
-
-export default function Chat() {
-  const [secret, setSecret] = useState<string>("");
+import { SecretInput } from "@/app/secretInput";
+function ClientChat() {
+  const [secret, setSecret] = useLocalStorage<string>("secret", "");
   const { messages, input, handleInputChange, handleSubmit } = useChat({
     headers: {
       "x-secret": secret,
@@ -12,12 +12,7 @@ export default function Chat() {
   });
   return (
     <>
-      <input
-        className="w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
-        value={secret}
-        placeholder="secret"
-        onChange={(v) => setSecret(v.target.value)}
-      />
+      <SecretInput value={secret} onChange={setSecret} />
       <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
         {messages.map((m) => (
           <div key={m.id} className="whitespace-pre-wrap">
@@ -37,4 +32,13 @@ export default function Chat() {
       </div>
     </>
   );
+}
+export default function Chat() {
+  const isClient = useIsClient();
+
+  if (!isClient) {
+    // needed as ClientChat calls useLocalStorage that does not work when generating on server
+    return null;
+  }
+  return <ClientChat />;
 }
