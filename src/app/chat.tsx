@@ -5,6 +5,7 @@ import { SECRET_KEY, SecretInput } from "@/app/secretInput";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { SECRET_HEADER } from "@/app/constants";
+import { Markdown } from "@/app/components/custom/markdown";
 
 export default function Chat() {
   const [files, setFiles] = useState<FileList | undefined>(undefined);
@@ -20,7 +21,7 @@ export default function Chat() {
         {messages.map((m) => (
           <div key={m.id} className="whitespace-pre-wrap">
             {m.role === "user" ? "User: " : "AI: "}
-            {m.content}
+            <Markdown>{m.content}</Markdown>
             {m.toolInvocations &&
               m.toolInvocations.map((t) => (
                 <React.Fragment key={t.toolCallId}>
