@@ -5,6 +5,10 @@ import { streamText } from "ai";
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  if (req.headers.get("x-secret") !== process.env.SECRET) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   const { messages } = await req.json();
 
   const result = streamText({
