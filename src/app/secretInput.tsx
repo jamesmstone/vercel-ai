@@ -8,14 +8,18 @@ export const SECRET_KEY = "secret";
 function SecretInputClient() {
   const [value, setValue] = useLocalStorage<string>(SECRET_KEY, "");
   return (
-    <input
-      aria-label={"secret"}
-      type={"password"}
-      className="w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
-      value={value}
-      placeholder="secret token"
-      onChange={(v) => setValue(v.target.value)}
-    />
+    <div>
+      <label htmlFor="secretInput">Secret:</label>
+      <input
+        id={"secretInput"}
+        aria-label={"secret"}
+        type={"password"}
+        className="w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+        value={value}
+        placeholder="secret token"
+        onChange={(v) => setValue(v.target.value)}
+      />
+    </div>
   );
 }
 
