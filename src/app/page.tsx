@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Chat from "@/app/chat";
 
 export default function Home() {
