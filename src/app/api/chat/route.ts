@@ -1,12 +1,15 @@
 import { openai } from "@ai-sdk/openai";
 import { streamText, tool } from "ai";
-import * as mathjs from "mathjs";
 import { z } from "zod";
 import { DateTime } from "luxon";
 
+import { parameters as calculateParameters } from "@/app/api/tools/calculate/parameters";
+
 const JINA_API_KEY = process.env.JINA_API_KEY;
 
-export const maxDuration = 27; // vercel has a 30 sec limit
+export const runtime = "edge";
+// edge has no limit, function have limits: see: https://vercel.com/docs/functions/runtimes#max-duration
+export const maxDuration = 120;
 const maxSteps = 10;
 
 const getTimeInTimeZoneExecute = async ({ timezone }: { timezone: string }) => {
@@ -24,14 +27,6 @@ const getTimeInTimezone = tool({
     "A tool to get the current time in a specified timezone. Input the timezone in IANA format (e.g., 'America/New_York', 'Europe/London').",
   parameters: z.object({ timezone: z.string() }),
   execute: getTimeInTimeZoneExecute,
-});
-
-const calculate = tool({
-  description:
-    "A tool for evaluating mathematical expressions. Example expressions: " +
-    "'1.2 * (2 + 4.5)', '12.7 cm to inch', 'sin(45 deg) ^ 2'.",
-  parameters: z.object({ expression: z.string() }),
-  execute: async ({ expression }) => mathjs.evaluate(expression),
 });
 
 const readUrl = tool({
@@ -98,8 +93,53 @@ const groundStatement = tool({
 
 const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them.`;
 
+type ToolParams = Parameters<typeof tool>;
+type ExternalToolParams = Omit<ToolParams[0], "execute" | "description"> & {
+  endpoint: string;
+  origin: string;
+  secret: string;
+  description: string;
+};
+const getExternalTool = ({
+  origin,
+  endpoint,
+  secret,
+  description,
+  parameters,
+}: ExternalToolParams) =>
+  tool({
+    description,
+    parameters,
+    execute: async (params) => {
+      const fetchUrl = `${origin}/api/tools/${endpoint}`;
+      const response = await fetch(fetchUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-secret": secret,
+        },
+        body: JSON.stringify(params),
+      });
+      return await response.text();
+    },
+  });
+
+const getCalculate = (origin: string, secret: string) =>
+  getExternalTool({
+    endpoint: "calculate",
+    origin,
+    secret,
+    parameters: calculateParameters,
+    description:
+      "A tool for evaluating mathematical expressions. Example expressions: " +
+      "'1.2 * (2 + 4.5)', '12.7 cm to inch', 'sin(45 deg) ^ 2'.",
+  });
 export async function POST(req: Request) {
-  if (req.headers.get("x-secret") !== process.env.SECRET) {
+  const origin = req.headers.get("origin");
+  if (origin === null) throw new Error("Missing origin header");
+
+  const secret = req.headers.get("x-secret");
+  if (secret !== process.env.SECRET) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -113,7 +153,7 @@ export async function POST(req: Request) {
     }),
     tools: {
       getTimeInTimezone,
-      calculate,
+      calculate: getCalculate(origin, secret),
       readUrl,
       searchWeb,
       groundStatement,
