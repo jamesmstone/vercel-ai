@@ -3,7 +3,7 @@
 import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
 import { useChat } from "ai/react";
 import { SecretInput } from "@/app/secretInput";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 
 function ClientChat() {
@@ -27,9 +27,9 @@ function ClientChat() {
             {m.content}
             {m.toolInvocations &&
               m.toolInvocations.map((t) => (
-                <>
+                <React.Fragment key={t.toolCallId}>
                   {t.toolName}({t.state})
-                </>
+                </React.Fragment>
               ))}
             <div>
               {m?.experimental_attachments?.map((attachment, index) => {
