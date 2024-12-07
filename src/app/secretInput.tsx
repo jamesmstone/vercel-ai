@@ -1,3 +1,5 @@
+"use client";
+
 import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
 import React from "react";
 
