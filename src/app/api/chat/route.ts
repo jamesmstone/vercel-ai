@@ -4,6 +4,7 @@ import { z } from "zod";
 import { DateTime } from "luxon";
 
 import { parameters as calculateParameters } from "@/app/api/tools/calculate/parameters";
+import { SECRET_HEADER } from "@/app/constants";
 
 const JINA_API_KEY = process.env.JINA_API_KEY;
 
@@ -100,7 +101,7 @@ const getExternalTool = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-secret": secret,
+          SECRET_HEADER: secret,
         },
         body: JSON.stringify(params),
       });
@@ -122,7 +123,8 @@ export async function POST(req: Request) {
   const origin = req.headers.get("origin");
   if (origin === null) throw new Error("Missing origin header");
 
-  const secret = req.headers.get("x-secret");
+  const secret = req.headers.get(SECRET_HEADER);
+  console.log(secret, req.headers);
   if (secret !== process.env.SECRET) {
     return new Response("Unauthorized", { status: 401 });
   }

@@ -1,25 +1,21 @@
 "use client";
 
-import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
 import { useChat } from "ai/react";
-import { SecretInput } from "@/app/secretInput";
+import { SECRET_KEY, SecretInput } from "@/app/secretInput";
 import React, { useRef, useState } from "react";
 import Image from "next/image";
+import { SECRET_HEADER } from "@/app/constants";
 
-function ClientChat() {
-  const [secret, setSecret] = useLocalStorage<string>("secret", "");
+export default function Chat() {
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { messages, input, handleInputChange, handleSubmit, error, reload } =
     useChat({
       experimental_throttle: 50,
-      headers: {
-        "x-secret": secret,
-      },
     });
   return (
     <>
-      <SecretInput value={secret} onChange={setSecret} />
+      <SecretInput />
       <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
         {messages.map((m) => (
           <div key={m.id} className="whitespace-pre-wrap">
@@ -71,7 +67,14 @@ function ClientChat() {
 
         <form
           onSubmit={(event) => {
+            const jsonSecretFromLocal = window.localStorage.getItem(SECRET_KEY);
             handleSubmit(event, {
+              headers: {
+                [SECRET_HEADER]:
+                  jsonSecretFromLocal === null
+                    ? ""
+                    : JSON.parse(jsonSecretFromLocal),
+              },
               experimental_attachments: files,
             });
 
@@ -103,14 +106,4 @@ function ClientChat() {
       </div>
     </>
   );
-}
-
-export default function Chat() {
-  const isClient = useIsClient();
-
-  if (!isClient) {
-    // needed as ClientChat calls useLocalStorage that does not work when generating on server
-    return null;
-  }
-  return <ClientChat />;
 }
