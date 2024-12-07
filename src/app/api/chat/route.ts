@@ -76,7 +76,7 @@ const groundStatement = tool({
   },
 });
 
-const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them.`;
+const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them. Be brief eg dont offer further help`;
 
 type ToolParams = Parameters<typeof tool>;
 type ExternalToolParams = Omit<ToolParams[0], "execute" | "description"> & {
