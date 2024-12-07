@@ -15,7 +15,7 @@ export default function Chat() {
       experimental_throttle: 50,
     });
   return (
-    <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
+    <div>
       {messages.map((m) => (
         <div key={m.id} className="whitespace-pre-wrap">
           {m.role === "user" ? "User: " : "AI: "}
@@ -65,7 +65,7 @@ export default function Chat() {
       ))}
 
       <form
-        className="fixed bottom-0 w-full"
+        className="align-self-end place-self-end bottom-0 flex flex-row"
         onSubmit={(event) => {
           const jsonSecretFromLocal = window.localStorage.getItem(SECRET_KEY);
           handleSubmit(event, {
@@ -87,7 +87,7 @@ export default function Chat() {
       >
         <input
           type="file"
-          className="max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+          className="p-2 mb-8 border border-gray-300 rounded shadow-xl"
           onChange={(event) => {
             if (event.target.files) {
               setFiles(event.target.files);
@@ -96,11 +96,23 @@ export default function Chat() {
           multiple
           ref={fileInputRef}
         />
-        <input
-          className="max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+        <textarea
+          className="flex-grow p-2 mb-8 border border-gray-300 rounded shadow-xl"
           value={input}
           placeholder="Say something..."
           onChange={handleInputChange}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" && event.shiftKey) {
+              event.preventDefault();
+              event.currentTarget.form?.requestSubmit();
+            }
+          }}
+        />
+
+        <input
+          type="submit"
+          className="p-2 mb-8 ml-2 border border-gray-300 rounded shadow-xl"
+          value="Send"
         />
       </form>
     </div>
