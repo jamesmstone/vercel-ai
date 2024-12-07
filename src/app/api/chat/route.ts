@@ -3,9 +3,25 @@ import { streamText } from "ai";
 import { tool } from "ai";
 import * as mathjs from "mathjs";
 import { z } from "zod";
+import { DateTime } from "luxon";
 
 export const maxDuration = 27; // vercel has a 30 sec limit
 const maxSteps = 10;
+
+const getTimeInTimezone = tool({
+  description:
+    "A tool to get the current time in a specified timezone. Input the timezone in IANA format (e.g., 'America/New_York', 'Europe/London').",
+  parameters: z.object({ timezone: z.string() }),
+  execute: async ({ timezone }) => {
+    try {
+      const now = DateTime.now().setZone(timezone);
+      if (!now.isValid) throw new Error(`Invalid timezone: ${timezone}`);
+      return now.toFormat("yyyy-MM-dd HH:mm:ss");
+    } catch (error: unknown) {
+      return `Error: ${(error as Error).message}`;
+    }
+  },
+});
 
 export async function POST(req: Request) {
   if (req.headers.get("x-secret") !== process.env.SECRET) {
@@ -17,6 +33,7 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai("gpt-4o-2024-08-06", { structuredOutputs: true }),
     tools: {
+      getTimeInTimezone,
       calculate: tool({
         description:
           "A tool for evaluating mathematical expressions. Example expressions: " +
