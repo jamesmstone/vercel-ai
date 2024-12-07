@@ -106,7 +106,7 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4o-2024-08-06", { structuredOutputs: true }),
+    model: openai("gpt-4o-mini", { structuredOutputs: true }),
     tools: {
       getTimeInTimezone,
       calculate,
