@@ -13,13 +13,9 @@ export const maxDuration = 120;
 const maxSteps = 10;
 
 const getTimeInTimeZoneExecute = async ({ timezone }: { timezone: string }) => {
-  try {
-    const now = DateTime.now().setZone(timezone);
-    if (!now.isValid) throw new Error(`Invalid timezone: ${timezone}`);
-    return now.toFormat("yyyy-MM-dd HH:mm:ss");
-  } catch (error: unknown) {
-    return `Error: ${(error as Error).message}`;
-  }
+  const now = DateTime.now().setZone(timezone);
+  if (!now.isValid) return `Invalid timezone: ${timezone}`;
+  return now.toFormat("yyyy-MM-dd HH:mm:ss");
 };
 
 const getTimeInTimezone = tool({
@@ -37,17 +33,13 @@ const readUrl = tool({
       return "Error: Invalid URL. Please ensure it starts with 'https://' or 'http://'";
     }
     const fetchUrl = `https://r.jina.ai/${url}`;
-    try {
-      const response = await fetch(fetchUrl, {
-        headers: { Authorization: `Bearer ${JINA_API_KEY}` },
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
-      return await response.text();
-    } catch (error: unknown) {
-      return `Error: ${(error as Error).message}`;
+    const response = await fetch(fetchUrl, {
+      headers: { Authorization: `Bearer ${JINA_API_KEY}` },
+    });
+    if (!response.ok) {
+      return `Failed to fetch: ${response.statusText}`;
     }
+    return await response.text();
   },
 });
 
@@ -57,17 +49,13 @@ const searchWeb = tool({
   execute: async ({ query }) => {
     const encodedQuery = encodeURIComponent(query);
     const fetchUrl = `https://s.jina.ai/${encodedQuery}`;
-    try {
-      const response = await fetch(fetchUrl, {
-        headers: { Authorization: `Bearer ${JINA_API_KEY}` },
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
-      return await response.text();
-    } catch (error: unknown) {
-      return `Error: ${(error as Error).message}`;
+    const response = await fetch(fetchUrl, {
+      headers: { Authorization: `Bearer ${JINA_API_KEY}` },
+    });
+    if (!response.ok) {
+      return `Failed to fetch: ${response.statusText}`;
     }
+    return await response.text();
   },
 });
 
@@ -77,17 +65,13 @@ const groundStatement = tool({
   execute: async ({ statement }) => {
     const encodedStatement = encodeURIComponent(statement);
     const fetchUrl = `https://g.jina.ai/${encodedStatement}`;
-    try {
-      const response = await fetch(fetchUrl, {
-        headers: { Authorization: `Bearer ${JINA_API_KEY}` },
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
-      }
-      return await response.text();
-    } catch (error: unknown) {
-      return `Error: ${(error as Error).message}`;
+    const response = await fetch(fetchUrl, {
+      headers: { Authorization: `Bearer ${JINA_API_KEY}` },
+    });
+    if (!response.ok) {
+      return `Failed to fetch: ${response.statusText}`;
     }
+    return await response.text();
   },
 });
 
