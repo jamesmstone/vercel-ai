@@ -10,12 +10,13 @@ function ClientChat() {
   const [secret, setSecret] = useLocalStorage<string>("secret", "");
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { messages, input, handleInputChange, handleSubmit } = useChat({
-    experimental_throttle: 50,
-    headers: {
-      "x-secret": secret,
-    },
-  });
+  const { messages, input, handleInputChange, handleSubmit, error, reload } =
+    useChat({
+      experimental_throttle: 50,
+      headers: {
+        "x-secret": secret,
+      },
+    });
   return (
     <>
       <SecretInput value={secret} onChange={setSecret} />
@@ -56,6 +57,14 @@ function ClientChat() {
                   </div>
                 );
               })}
+              {error && (
+                <>
+                  <div>An error occurred.</div>
+                  <button type="button" onClick={() => reload()}>
+                    Retry
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ))}
