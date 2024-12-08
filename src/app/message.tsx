@@ -6,6 +6,12 @@ import { motion } from "framer-motion";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { BotMessageSquare, SquareUserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+
 export function Message({ message: message }: { message: Message }) {
   return (
     <motion.div
@@ -25,9 +31,15 @@ export function Message({ message: message }: { message: Message }) {
           <Markdown>{message.content}</Markdown>
           {message.toolInvocations &&
             message.toolInvocations.map((t) => (
-              <React.Fragment key={t.toolCallId}>
-                {t.toolName}({t.state})
-              </React.Fragment>
+              <HoverCard key={t.toolCallId}>
+                <HoverCardTrigger>
+                  {t.toolName}({t.state})
+                </HoverCardTrigger>
+                <HoverCardContent>
+                  {t.state === "result" && <>{t.result}</>}
+                  {t.state !== "result" && <>{t.args}</>}
+                </HoverCardContent>
+              </HoverCard>
             ))}
           <div>
             {message?.experimental_attachments?.map((attachment, index) => {
