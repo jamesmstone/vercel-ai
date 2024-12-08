@@ -158,7 +158,6 @@ export async function POST(req: Request) {
   if (origin === null) throw new Error("Missing origin header");
 
   const secret = req.headers.get(SECRET_HEADER);
-  console.log(secret, req.headers);
   if (secret !== process.env.SECRET) {
     return new Response("Unauthorized", { status: 401 });
   }
