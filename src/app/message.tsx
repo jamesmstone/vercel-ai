@@ -37,7 +37,7 @@ export function Message({ message: message }: { message: Message }) {
                 </HoverCardTrigger>
                 <HoverCardContent>
                   {t.state === "result" && <>{t.result}</>}
-                  {t.state !== "result" && <>{t.args}</>}
+                  {t.state !== "result" && <>{JSON.stringify(t.args)}</>}
                 </HoverCardContent>
               </HoverCard>
             ))}
