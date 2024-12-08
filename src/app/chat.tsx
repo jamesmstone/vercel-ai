@@ -5,6 +5,8 @@ import { SECRET_KEY } from "@/app/secretInput";
 import React, { useRef, useState } from "react";
 import { SECRET_HEADER } from "@/app/constants";
 import { Message } from "@/app/message";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export type Message = ReturnType<typeof useChat>["messages"][0];
 
@@ -49,9 +51,8 @@ export default function Chat() {
           }
         }}
       >
-        <input
+        <Input
           type="file"
-          className="p-2 mb-8 border border-gray-300 rounded shadow-xl"
           onChange={(event) => {
             if (event.target.files) {
               setFiles(event.target.files);
@@ -60,8 +61,7 @@ export default function Chat() {
           multiple
           ref={fileInputRef}
         />
-        <textarea
-          className="flex-grow p-2 mb-8 border border-gray-300 rounded shadow-xl"
+        <Textarea
           value={input}
           placeholder="Say something..."
           onChange={handleInputChange}
@@ -73,11 +73,7 @@ export default function Chat() {
           }}
         />
 
-        <input
-          type="submit"
-          className="p-2 mb-8 ml-2 border border-gray-300 rounded shadow-xl"
-          value="Send"
-        />
+        <Input type="submit" value="Send" />
       </form>
     </div>
   );

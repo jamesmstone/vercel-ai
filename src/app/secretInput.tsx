@@ -3,6 +3,7 @@
 import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
 import React from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const SECRET_KEY = "secret";
 
@@ -16,8 +17,8 @@ function SecretInputBase({
   disabled?: boolean;
 }) {
   return (
-    <div>
-      <label htmlFor="secretInput">Secret:</label>
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="secretInput">Token</Label>
       <Input
         disabled={disabled}
         id={"secretInput"}
