@@ -4,12 +4,13 @@ import { SettingsSheetButton } from "@/components/custom/settings-sheet";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <SettingsSheetButton className={"fixed top-4 right-4"} />
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Chat />
+    <>
+      <main className="flex justify-center p-4 md:p-8 lg:p-12">
+        <Chat className={"w-full max-w-3xl"} />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center"></footer>
-    </div>
+      <SettingsSheetButton
+        className={"fixed top-2 right-2 md:top-4 md:right-4"}
+      />
+    </>
   );
 }
