@@ -5,7 +5,7 @@ import { type Message } from "@/app/chat";
 
 export function Message({ message: message }: { message: Message }) {
   return (
-    <div key={message.id} className="whitespace-pre-wrap">
+    <div key={message.id}>
       {message.role === "user" ? "User: " : "AI: "}
       <Markdown>{message.content}</Markdown>
       {message.toolInvocations &&

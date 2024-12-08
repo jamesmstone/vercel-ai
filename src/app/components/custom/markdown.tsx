@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   return (
     <ReactMarkdown
+      className="whitespace-pre-wrap"
       remarkPlugins={[remarkGfm]}
       components={{
         code: ({ inline, className, children, ...props }) => {
