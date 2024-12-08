@@ -17,7 +17,8 @@ export function Message({ message: message }: { message: Message }) {
       <Alert>
         {message.role === "user" ? <SquareUserRound /> : <BotMessageSquare />}
         <AlertTitle>
-          {message.role[0].toUpperCase() + message.role.slice(1).toLowerCase()}
+          {message.role[0].toUpperCase() + message.role.slice(1).toLowerCase()}{" "}
+          {message.toolInvocations && " thinking"}
         </AlertTitle>
 
         <AlertDescription>
