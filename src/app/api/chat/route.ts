@@ -21,7 +21,7 @@ const getTimeInTimeZoneExecute = async ({ timezone }: { timezone: string }) => {
 
 const getTimeInTimezone = tool({
   description:
-    "A tool to get the current time in a specified timezone. Input the timezone in IANA format (e.g., 'America/New_York', 'Europe/London').",
+    "A tool to get the current time in a specified timezone. Input the timezone in IANA format (e.g., 'America/New_York', 'Europe/Copenhagen').",
   parameters: z.object({ timezone: z.string() }),
   execute: getTimeInTimeZoneExecute,
 });
@@ -71,6 +71,27 @@ const groundStatement = tool({
     });
     if (!response.ok) {
       return `Failed to fetch: ${response.statusText}`;
+    }
+    return await response.text();
+  },
+});
+
+const appendToDailyNote = tool({
+  description: "Append markdown to James' daily note",
+  parameters: z.object({ content: z.string() }),
+  execute: async ({ content }) => {
+    const response = await fetch(
+      "https://ai.sgp.jamesst.one/append-to-daily-note",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain",
+        },
+        body: "-----\n\n" + content,
+      },
+    );
+    if (!response.ok) {
+      return `Failed to append to daily note: ${response.statusText}`;
     }
     return await response.text();
   },
@@ -157,6 +178,7 @@ export async function POST(req: Request) {
       searchWeb,
       groundStatement,
       fetchOCRText,
+      appendToDailyNote,
     },
     system,
     maxSteps,
