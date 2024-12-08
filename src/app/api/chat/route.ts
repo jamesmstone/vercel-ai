@@ -87,7 +87,7 @@ const appendToDailyNote = tool({
         headers: {
           "Content-Type": "text/plain",
         },
-        body: "-----\n\n" + content,
+        body: "\n\n-----\n\n" + content,
       },
     );
     if (!response.ok) {
