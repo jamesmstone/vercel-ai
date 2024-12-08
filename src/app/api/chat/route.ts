@@ -76,6 +76,19 @@ const groundStatement = tool({
   },
 });
 
+const fetchOCRText = tool({
+  parameters: z.object({}),
+  description:
+    "Fetch and return text from OCR of James' current computer screen.",
+  execute: async () => {
+    const response = await fetch("https://ai.nixos.sgp.jamesst.one/window-ocr");
+    if (!response.ok) {
+      return `Failed to fetch OCR text: ${response.statusText}`;
+    }
+    return await response.text();
+  },
+});
+
 const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them. Be brief eg dont offer further help. ALWAYS link to sources.`;
 
 type ToolParams = Parameters<typeof tool>;
@@ -143,6 +156,7 @@ export async function POST(req: Request) {
       readUrl,
       searchWeb,
       groundStatement,
+      fetchOCRText,
     },
     system,
     maxSteps,
