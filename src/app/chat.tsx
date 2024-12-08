@@ -3,9 +3,10 @@
 import { useChat } from "ai/react";
 import { SECRET_KEY } from "@/app/secretInput";
 import React, { useRef, useState } from "react";
-import Image from "next/image";
 import { SECRET_HEADER } from "@/app/constants";
-import { Markdown } from "@/app/components/custom/markdown";
+import { Message } from "@/app/message";
+
+export type Message = ReturnType<typeof useChat>["messages"][0];
 
 export default function Chat() {
   const [files, setFiles] = useState<FileList | undefined>(undefined);
@@ -17,53 +18,16 @@ export default function Chat() {
   return (
     <div>
       {messages.map((m) => (
-        <div key={m.id} className="whitespace-pre-wrap">
-          {m.role === "user" ? "User: " : "AI: "}
-          <Markdown>{m.content}</Markdown>
-          {m.toolInvocations &&
-            m.toolInvocations.map((t) => (
-              <React.Fragment key={t.toolCallId}>
-                {t.toolName}({t.state})
-              </React.Fragment>
-            ))}
-          <div>
-            {m?.experimental_attachments?.map((attachment, index) => {
-              return (
-                <div
-                  key={`${m.id}-${index}`}
-                  className="w-36 h-36 flex flex-col items-center justify-center border border-gray-300 rounded shadow-lg p-2"
-                >
-                  {attachment?.contentType?.startsWith("image/") ? (
-                    <Image
-                      key={`${m.id}-${index}`}
-                      src={attachment.url}
-                      width={36}
-                      height={36}
-                      alt={attachment.name ?? `attachment-${index}`}
-                    />
-                  ) : (
-                    <>
-                      <span>{attachment.name ?? `attachment-${index}`}</span>
-                      <span className="text-sm text-gray-500">
-                        {attachment.contentType}
-                      </span>
-                    </>
-                  )}
-                </div>
-              );
-            })}
-            {error && (
-              <>
-                <div>An error occurred.</div>
-                <button type="button" onClick={() => reload()}>
-                  Retry
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        <Message key={m.id} message={m} />
       ))}
-
+      {error && (
+        <>
+          <div>An error occurred.</div>
+          <button type="button" onClick={() => reload()}>
+            Retry
+          </button>
+        </>
+      )}
       <form
         className="align-self-end place-self-end bottom-0 flex flex-row"
         onSubmit={(event) => {
