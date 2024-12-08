@@ -22,28 +22,29 @@ export default function Chat({ className }: { className?: string }) {
       experimental_throttle: 50,
     });
   return (
-    <div className={cn("flex flex-col h-screen", className)}>
-      <div className={"flex-grow flex flex-col gap-2 overflow-y-auto"}>
-        {messages.map((m) => (
-          <Message key={m.id} message={m} />
-        ))}
-        {error && (
-          <Alert>
-            <CircleX />
-            <AlertTitle className={"font-bold text-red-500"}>
-              Error: {error.name}
-            </AlertTitle>
-            <AlertDescription>
-              {error.message}
-              <br />
-              {JSON.stringify(error?.cause)} {error.stack}
-            </AlertDescription>
-            <Button variant={"outline"} onClick={() => reload()}>
-              Retry <RotateCw />
-            </Button>
-          </Alert>
-        )}
-      </div>
+    <div
+      className={cn("flex flex-col content-end items-center gap-4", className)}
+    >
+      {messages.map((m) => (
+        <Message key={m.id} message={m} />
+      ))}
+      {error && (
+        <Alert>
+          <CircleX />
+          <AlertTitle className="font-bold text-red-500">
+            Error: {error.name}
+          </AlertTitle>
+          <AlertDescription>
+            {error.message}
+            <br />
+            {JSON.stringify(error?.cause)} {error.stack}
+          </AlertDescription>
+          <Button variant="outline" onClick={() => reload()}>
+            Retry <RotateCw />
+          </Button>
+        </Alert>
+      )}
+
       <Alert>
         <form
           className="flex flex-row gap-2 items-end"
@@ -67,7 +68,7 @@ export default function Chat({ className }: { className?: string }) {
           }}
         >
           <Input
-            className={"flex-auto max-w-[100px]"}
+            className="flex-auto max-w-[100px]"
             type="file"
             onChange={(event) => {
               if (event.target.files) {
@@ -79,20 +80,19 @@ export default function Chat({ className }: { className?: string }) {
           />
           <Textarea
             tabIndex={1}
-            className={"flex-grow min-h-[24px]"}
+            className="flex-grow min-h-[24px]"
             rows={3}
             value={input}
             placeholder="Say something..."
             onChange={handleInputChange}
             onKeyDown={(event) => {
-              if (event.key === "Enter" && event.shiftKey) {
+              if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
                 event.currentTarget.form?.requestSubmit();
               }
             }}
           />
-
-          <Input className={"flex-1"} type="submit" value="Send" />
+          <Input className="flex-1" type="submit" value="Send" />
         </form>
       </Alert>
     </div>
