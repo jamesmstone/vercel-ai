@@ -29,7 +29,8 @@ const getTimeInTimezone = tool({
 const readUrl = tool({
   description: "Load public url and return the content.",
   parameters: z.object({ url: z.string() }),
-  execute: async ({ url }) => {
+  execute: async ({ url: rawUrl }) => {
+    const url = rawUrl.trim();
     if (!url.startsWith("https://") || !url.startsWith("http://")) {
       return `Error: Invalid URL:  ${url}. Please ensure it starts with 'https://' or 'http://'`;
     }
