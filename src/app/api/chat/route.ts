@@ -38,7 +38,11 @@ const readUrl = tool({
       headers: { Authorization: `Bearer ${JINA_API_KEY}` },
     });
     if (!response.ok) {
-      return `Failed to fetch: ${response.statusText}`;
+      return (
+        `Failed to fetch: ${response.statusText} for URL: ${url}` +
+        "\n" +
+        (await response.text())
+      );
     }
     return await response.text();
   },
