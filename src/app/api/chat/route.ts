@@ -31,7 +31,7 @@ const readUrl = tool({
   parameters: z.object({ url: z.string() }),
   execute: async ({ url: rawUrl }) => {
     const url = rawUrl.trim();
-    if (!url.startsWith("https://") || !url.startsWith("http://")) {
+    if (!url.startsWith("https://") && !url.startsWith("http://")) {
       return `Error: Invalid URL:  ${url}. Please ensure it starts with 'https://' or 'http://'`;
     }
     const fetchUrl = `https://r.jina.ai/${url}`;
