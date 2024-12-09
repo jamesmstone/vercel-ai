@@ -36,7 +36,13 @@ export function Message({ message: message }: { message: Message }) {
                   {t.toolName}({t.state})
                 </HoverCardTrigger>
                 <HoverCardContent>
-                  {t.state === "result" && <>{t.result}</>}
+                  {t.state === "result" && (
+                    <>
+                      {t.result}
+                      <br />
+                      {JSON.stringify(t.args)}
+                    </>
+                  )}
                   {t.state !== "result" && <>{JSON.stringify(t.args)}</>}
                 </HoverCardContent>
               </HoverCard>
