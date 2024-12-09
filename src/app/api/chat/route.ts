@@ -81,38 +81,63 @@ const groundStatement = tool({
   },
 });
 
+const queryPersonalDevices = async (url: string, body?: string) => {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+    ...(body === undefined ? {} : { body }),
+  });
+  if (!response.ok) {
+    return `Failed (${response.statusText}):` + "\n" + (await response.text());
+  }
+  return await response.text();
+};
+
 const appendToDailyNote = tool({
   description: "Append markdown to James' daily note",
   parameters: z.object({ content: z.string() }),
-  execute: async ({ content }) => {
-    const response = await fetch(
+  execute: async ({ content }) =>
+    await queryPersonalDevices(
       "https://ai.sgp.jamesst.one/append-to-daily-note",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "text/plain",
-        },
-        body: "\n\n-----\n\n" + content,
-      },
-    );
-    if (!response.ok) {
-      return `Failed to append to daily note: ${response.statusText}`;
-    }
-    return await response.text();
-  },
+      "\n\n-----\n\n" + content,
+    ),
+});
+
+const searchPrefixes = [
+  `"email:" all emails James has received / sent`,
+  `"read:" which provides a list of articles he has read`,
+  `"jira:" jira issues from his work`,
+  `"DDG:"  DuckDuckGo`,
+  `"record:" OCR'd screenshots of his laptop`,
+];
+const format = "$engineName" + "\t" + "$key" + "\t" + "$title";
+
+const searchDescription = `search engine of my James' personal notes. Searches can be prefixed with the following:
+ ${searchPrefixes.join("\n")}
+ 
+This search engine is dumb, but fast, you will probably need to try multiple searches including searching for synonyms. You can always fall back on "DDG: searchTerm"
+The output is:
+${format}
+`;
+
+const personalSearch = tool({
+  description: searchDescription,
+  parameters: z.object({ query: z.string() }),
+  execute: async ({ query }) =>
+    await queryPersonalDevices(
+      "https://ai.nixos.sgp.jamesst.one/search",
+      query,
+    ),
 });
 
 const fetchOCRText = tool({
   parameters: z.object({}),
   description:
     "Fetch and return text from OCR of James' current computer screen.",
-  execute: async () => {
-    const response = await fetch("https://ai.nixos.sgp.jamesst.one/window-ocr");
-    if (!response.ok) {
-      return `Failed to fetch OCR text: ${response.statusText}`;
-    }
-    return await response.text();
-  },
+  execute: async () =>
+    await queryPersonalDevices("https://ai.nixos.sgp.jamesst.one/window-ocr"),
 });
 
 const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them. Be brief eg dont offer further help. ALWAYS link to sources.`;
@@ -178,6 +203,7 @@ export async function POST(req: Request) {
     tools: {
       getTimeInTimezone,
       calculate: getCalculate(origin, secret),
+      personalSearch,
       readUrl,
       searchWeb,
       groundStatement,
