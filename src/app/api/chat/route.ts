@@ -141,6 +141,14 @@ const fetchOCRText = tool({
     await queryPersonalDevices("https://ai.nixos.sgp.jamesst.one/window-ocr"),
 });
 
+const xdgOpen = tool({
+  parameters: z.object({ arguments: z.string() }),
+  description:
+    "open a file or URL with the default application for the file type on James laptop",
+  execute: async () =>
+    await queryPersonalDevices("https://ai.nixos.sgp.jamesst.one/xdg-open"),
+});
+
 const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them. Be brief eg dont offer further help. ALWAYS link to sources.`;
 
 type ToolParams = Parameters<typeof tool>;
@@ -204,6 +212,7 @@ export async function POST(req: Request) {
     tools: {
       getTimeInTimezone,
       calculate: getCalculate(origin, secret),
+      xdgOpen,
       personalSearch,
       readUrl,
       searchWeb,
