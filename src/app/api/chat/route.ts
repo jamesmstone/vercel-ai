@@ -142,11 +142,14 @@ const fetchOCRText = tool({
 });
 
 const xdgOpen = tool({
-  parameters: z.object({ arguments: z.string() }),
+  parameters: z.object({ url: z.string() }),
   description:
     "open a file or URL with the default application for the file type on James laptop",
-  execute: async () =>
-    await queryPersonalDevices("https://ai.nixos.sgp.jamesst.one/xdg-open"),
+  execute: async ({ url }) =>
+    await queryPersonalDevices(
+      "https://ai.nixos.sgp.jamesst.one/xdg-open",
+      url,
+    ),
 });
 
 const system = `You are James' helpful assistant. The current time in Copenhagen, where he lives is ${getTimeInTimeZoneExecute({ timezone: "Europe/Copenhagen" })}. Don't make up facts, search and ground them. Be brief eg dont offer further help. ALWAYS link to sources.`;
