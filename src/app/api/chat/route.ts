@@ -106,6 +106,7 @@ const appendToDailyNote = tool({
 });
 
 const searchPrefixes = [
+  `"note:" my obsidian knowledge base. good for people, work at tradition, other general items`,
   `"email:" all emails James has received / sent`,
   `"read:" which provides a list of articles he has read`,
   `"jira:" jira issues from his work`,
