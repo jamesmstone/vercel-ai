@@ -178,7 +178,7 @@ const getExternalTool = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          SECRET_HEADER: secret,
+          [SECRET_HEADER]: secret,
         },
         body: JSON.stringify(params),
       });
