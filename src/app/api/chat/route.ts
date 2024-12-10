@@ -4,6 +4,7 @@ import { z } from "zod";
 import { DateTime } from "luxon";
 
 import { parameters as calculateParameters } from "@/app/api/tools/calculate/parameters";
+import { parameters as jsParameters } from "@/app/api/tools/js/parameters";
 import { SECRET_HEADER } from "@/app/constants";
 
 const JINA_API_KEY = process.env.JINA_API_KEY;
@@ -195,6 +196,16 @@ const getCalculate = (origin: string, secret: string) =>
       "A tool for evaluating mathematical expressions. Example expressions: " +
       "'1.2 * (2 + 4.5)', '12.7 cm to inch', 'sin(45 deg) ^ 2'.",
   });
+
+const getJS = (origin: string, secret: string) =>
+  getExternalTool({
+    endpoint: "js",
+    origin,
+    secret,
+    parameters: jsParameters,
+    description:
+      "a JavaScript engine: runs eval on the provided src and returns result",
+  });
 export async function POST(req: Request) {
   const origin = req.headers.get("origin");
   if (origin === null) throw new Error("Missing origin header");
@@ -215,6 +226,7 @@ export async function POST(req: Request) {
     tools: {
       getTimeInTimezone,
       calculate: getCalculate(origin, secret),
+      js: getJS(origin, secret),
       xdgOpen,
       personalSearch,
       readUrl,
