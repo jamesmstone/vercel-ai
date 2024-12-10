@@ -11,6 +11,10 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  process.env = {
+    NODE_ENV: process.env.NODE_ENV,
+  };
+
   const json = await req.json();
   const { src } = parameters.parse(json);
 
